@@ -56,37 +56,35 @@ const confirmarCorreo = async (req, res) => {
 //registrarse
 const registrarse = async (req, res) => {
     const { nombre, apellido, email, password, direccion, telefono, isAdmin } = req.body;
-
+    
     //busco si ya esxiste el email
-    const usuario = await Usuario.find({ email });
-    if (usuario.email) {
-        return res.status(400).json({
-            msg: 'El email ya esta registrado'
+    const usuario = await Usuario.findOne({ email });
+    if (usuario) {
+        return res.status(400).json({ msg: 'El email ya esta registrado' });
+    } else {
+        //cifro password
+        //cifro pass
+        const passwordCifrado = CryptoJS.AES.encrypt(
+            password,
+            process.env.PASS_SEC
+        ).toString();
+
+        const nuevoUsuario = await Usuario.create({
+            nombre,
+            apellido,
+            email,
+            password: passwordCifrado,
+            direccion,
+            telefono,
+            isAdmin
         });
+        await nuevoUsuario.save();
+
+        // Enviar correo de confirmación
+        //await enviarCorreoConfirmacion(email, nombre);
+
+        return res.status(200).json({ msg: 'success' });
     }
-
-    //cifro password
-    //cifro pass
-    const passwordCifrado = CryptoJS.AES.encrypt(
-        password,
-        process.env.PASS_SEC
-    ).toString();
-
-    const nuevoUsuario = await Usuario.create({
-        nombre,
-        apellido,
-        email,
-        password: passwordCifrado,
-        direccion,
-        telefono,
-        isAdmin
-    });
-    await nuevoUsuario.save();
-
-    // Enviar correo de confirmación
-    //await enviarCorreoConfirmacion(email, nombre);
-
-    res.json({ msg: 'Usuario creado' });
 }
 
 //trae usuarios 

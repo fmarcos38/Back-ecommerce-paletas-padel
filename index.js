@@ -4,7 +4,7 @@ const cors = require('cors');
 const dbConnection = require('./src/config/db');
 dotenv.config();
 //importo rutas
-const userRoutes = require('./src/routes/userio');
+const userRoutes = require('./src/routes/usuario');
 const app = express();
 
 //middlewares
@@ -15,7 +15,7 @@ app.use(cors());
 dbConnection();
 
 //rutas
-app.use('/user', userRoutes);
+app.use('/usuario', userRoutes);
 
 //puerto
 const PORT = process.env.PORT || 3001;

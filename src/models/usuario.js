@@ -18,11 +18,11 @@ const UsuarioSchema = Schema({
         required: true
     },
     telefono: {
-        type: String,
+        type: Number,
         required: true
     },
     direccion: {
-        type: Array,
+        type: String,
         required: true
     },
     isAdmin: {
