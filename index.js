@@ -5,6 +5,8 @@ const dbConnection = require('./src/config/db');
 dotenv.config();
 //importo rutas
 const userRoutes = require('./src/routes/usuario');
+const productoRoutes = require('./src/routes/producto');
+
 const app = express();
 
 //middlewares
@@ -16,9 +18,10 @@ dbConnection();
 
 //rutas
 app.use('/usuario', userRoutes);
+app.use('/producto', productoRoutes);
 
 //puerto
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 //inicializo servidor
 app.listen(PORT, () => {
