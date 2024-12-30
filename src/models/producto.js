@@ -3,19 +3,15 @@ const { Schema, model } = require('mongoose');
 const ProductoSchema = new Schema({
     nombre: {
         type: String,
-        required: true
     },
     precio: {
         type: Number,
-        required: true
     },
     descripcion: {
         type: String,
-        required: true
     },
     imagenes: {
         type: Array,
-        required: true
     },
     /* categoria: {
         type: String,
@@ -25,6 +21,18 @@ const ProductoSchema = new Schema({
         type: Number,
         required: true
     }, */
+    agotado: {
+        type: Boolean,
+        default: false
+    },
+    enPromo: {
+        type: Boolean,
+        default: false
+    },
+    porcentajeDescuento: {
+        type: Number,
+        default: 0
+    }
 });
 
 module.exports = model('Producto', ProductoSchema);
