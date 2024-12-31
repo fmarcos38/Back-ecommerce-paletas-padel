@@ -16,13 +16,14 @@ const traerProductos = async (req, res) => {
 
 //trae un producto
 const traerProducto = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; 
 
     try {
         const producto = await Productos.findById(id);
         if (!producto) {
             return res.status(404).json({ msg: 'Producto no encontrado' });
         }
+        
         res.status(200).json(producto);
     }catch (error) {
         console.error('Error al traer el producto:', error);
