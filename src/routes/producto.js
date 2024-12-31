@@ -4,7 +4,7 @@ const upload = require('../config/multer');
 const Producto = require('../models/producto');
 const { traerProductos, traerProducto } = require('../controllers/producto');
 
-const router = express.Router();
+const router = express.Router()
 
 //rutas
 //creo producto
