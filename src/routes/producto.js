@@ -2,7 +2,7 @@ const express = require('express');
 const cloudinary = require('../config/cloudinary');
 const upload = require('../config/multer'); 
 const Producto = require('../models/producto');
-const { traerProductos, traerProducto } = require('../controllers/producto');
+const { traerProductos, traerProducto, traerProductosRangoPrecio } = require('../controllers/producto');
 
 const router = express.Router()
 
@@ -60,7 +60,10 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
 //trae productos
 router.get('/', traerProductos);
 
-//trae un producto por id
+//trae productos en rango de precios +- enviado desde el front
+router.get('/rangoPrecio', traerProductosRangoPrecio);
+
+//trae un producto por id - siempre el q es con :id va al final
 router.get('/:id', traerProducto);
 
 //edita producto
