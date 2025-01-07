@@ -14,7 +14,7 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
     try {
         // Parsear el JSON que llega del body
         const parsedData = JSON.parse(data);
-        const { nombre, precio, descripcion, imagenes, agotado, enPromo, porcentajeDescuento } = parsedData;
+        const { nombre, precio, descripcion, imagenes, agotado, enPromo, porcentajeDescuento, categoria, stock } = parsedData;
 
         // Validación de precio
         const precioNumerico = parseFloat(precio);
@@ -46,6 +46,8 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
             agotado,
             enPromo,
             porcentajeDescuento,
+            categoria,
+            stock
         });
 
         await nuevoProducto.save();
@@ -67,49 +69,58 @@ router.get('/rangoPrecio', traerProductosRangoPrecio);
 router.get('/:id', traerProducto);
 
 //edita producto
-router.put('/:id', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
+router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
     const { id } = req.params;
     
     try {
         // Parsear el JSON que llega del body
+        const { data } = req.body;
         const parsedData = JSON.parse(data);
-        const { nombre, precio, descripcion, imagenes, agotado, enPromo, porcentajeDescuento } = parsedData;
+        const { nombre, precio, imgsExistentes, descripcion, agotado, enPromo, porcentajeDescuento, stock, categoria } = parsedData;
 
-        //busco el producto
+        // Buscar el producto
         const producto = await Producto.findById(id);
         if (!producto) {
             return res.status(404).json({ msg: 'Producto no encontrado' });
         }
-        
-        // Subir imágenes a Cloudinary, pero si ya existen que no se repitan
+
+        // Subir nuevas imágenes a Cloudinary
         const imagenesUrls = await Promise.all(
-            (req.files['imagenes'] || []).map(async (file) => {
-                const existingImage = producto.imagenes.find(img => img.originalname === file.originalname);
-                if (existingImage) {
-                    return existingImage.url;
-                } else {
-                    const result = await cloudinary.uploader.upload(file.path);
-                    return result.secure_url;
-                }
+            (req.files['imagenes'] || []).map((file) => {
+                return new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                        (error, result) => {
+                            if (error) return reject(error);
+                            resolve(result.secure_url);
+                        }
+                    );
+                    uploadStream.end(file.buffer); // Enviar buffer a Cloudinary
+                });
             })
         );
+        // Combinar todas las URLs
+        const todasLasImagenes = [...imgsExistentes, imagenesUrls];
 
+        // Actualizar el producto
         await Producto.findByIdAndUpdate(id, {
             nombre,
             precio,
             descripcion,
-            imagenes: imagenesUrls,
+            imagenes: todasLasImagenes,
             agotado,
             enPromo,
-            porcentajeDescuento
+            porcentajeDescuento,
+            stock,
+            categoria
         });
 
-        res.status(200).json({ msg: 'ok' });
+        res.status(200).json({ msg: 'Producto actualizado correctamente' });
     } catch (error) {
         console.error('Error al editar el producto:', error);
         res.status(500).json({ msg: 'Error al editar el producto' });
     }
 });
+
 
 //elimina producto y sus imagenes de cloudinary
 router.delete('/:id', async (req, res) => {

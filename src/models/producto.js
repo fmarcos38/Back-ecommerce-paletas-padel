@@ -13,14 +13,13 @@ const ProductoSchema = new Schema({
     imagenes: {
         type: Array,
     },
-    /* categoria: {
+    categoria: {
         type: String,
         required: true
     },
     stock: {
         type: Number,
-        required: true
-    }, */
+    },
     agotado: {
         type: Boolean,
         default: false

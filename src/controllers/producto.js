@@ -64,7 +64,6 @@ const traerProducto = async (req, res) => {
 const traerProductosRangoPrecio = async (req, res) => {
     const { limit, offset, precioMin, precioMax } = req.query; 
     
-    console.log('req.query:', req.query);
     try {
         let productos;
         let filtros = {};
