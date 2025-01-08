@@ -4,6 +4,7 @@ const cors = require('cors');
 const dbConnection = require('./src/config/db');
 dotenv.config();
 //importo rutas
+const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/usuario');
 const productoRoutes = require('./src/routes/producto');
 
@@ -17,6 +18,7 @@ app.use(cors());
 dbConnection();
 
 //rutas
+app.use('/auth', authRoutes);
 app.use('/usuario', userRoutes);
 app.use('/producto', productoRoutes);
 

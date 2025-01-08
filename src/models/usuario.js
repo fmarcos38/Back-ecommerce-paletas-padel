@@ -21,6 +21,10 @@ const UsuarioSchema = Schema({
         type: Number,
         required: true
     },
+    favoritos: {
+        type: Array,
+        default: []
+    },
     direccion: {
         type: String,
         required: true
@@ -28,6 +32,10 @@ const UsuarioSchema = Schema({
     isAdmin: {
         type: Boolean,
         required: true
+    },
+    correoVerificado: {
+        type: Boolean,
+        default: false
     }
 });
 

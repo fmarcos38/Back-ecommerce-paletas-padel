@@ -1,4 +1,7 @@
-const User = require('../models/user');
+const Usuario = require('../models/usuario');
+const CryptoJS = require('crypto-js');
+const jwt = require('jsonwebtoken');
+
 //login
 const login = async (req, res) => { 
     try {
@@ -20,10 +23,20 @@ const login = async (req, res) => {
 
             //si el user es correcto CREO el JWT, para mayor seguridad de mi aplicacion, q se asocia con el email del user
             const token = jwt.sign({ email: user.email }, process.env.JWT_SEC);
-
-            res.json({//res --> del login -->esta info esta alojada en -->user._doc CORROBORAR
-                user: user.email,
+            
+            //normailizo la info q quiero enviar
+            const userLog = {
+                email: user.email,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                telefono: user.telefono,
+                direccion: user.direccion,
+                isAdmin: user.isAdmin,
+                correoVerificado: user.correoVerificado,
                 token,
+            };
+            res.json({//res --> del login -->esta info esta alojada en -->user._doc CORROBORAR
+                user: userLog,
                 message: "ok"
             });
         }
