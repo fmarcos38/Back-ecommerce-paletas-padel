@@ -53,7 +53,7 @@ const traerUsuarios = async (req, res) => {
 //traer usuario por id
 const traerUsuario = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params; 
         const usuario = await Usuario.findById(id);
 
         if (!usuario) {
@@ -62,7 +62,7 @@ const traerUsuario = async (req, res) => {
             });
         }
 
-        res.json(user);
+        res.json(usuario);
     }
     catch (error) {
         console.error('Error al traer el usuario:', error);

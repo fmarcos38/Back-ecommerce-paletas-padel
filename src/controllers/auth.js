@@ -26,12 +26,14 @@ const login = async (req, res) => {
             
             //normailizo la info q quiero enviar
             const userLog = {
+                id: user._id,
                 email: user.email,
                 nombre: user.nombre,
                 apellido: user.apellido,
                 telefono: user.telefono,
                 direccion: user.direccion,
                 isAdmin: user.isAdmin,
+                favoritos: user.favoritos,
                 correoVerificado: user.correoVerificado,
                 token,
             };
