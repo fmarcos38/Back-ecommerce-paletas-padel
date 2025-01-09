@@ -1,6 +1,7 @@
 const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
-const { enviarCorreoConfirmacion } = require('./envioEmail');
+const Producto = require('../models/producto');
+//const { enviarCorreoConfirmacion } = require('./envioEmail');
 
 
 //registrarse
@@ -153,6 +154,25 @@ const eliminarFavoritos = async (req, res) => {
     res.json({msg: 'Producto eliminado de favoritos'});
 };
 
+//trae favoritos
+const traerFavoritos = async (req, res) => {
+    const { id } = req.params;
+
+    const usuario = await Usuario.findById(id);
+    if(!usuario){
+        return res.status(404).json({msg: 'Usuario no encontrado'});
+    }
+
+    const favoritos = [];
+    //recorro los favoritos del usuario
+    for (let i = 0; i < usuario.favoritos.length; i++) {
+        const producto = await Producto.findById(usuario.favoritos[i]);
+        favoritos.push(producto);
+    }
+
+    res.json(favoritos);
+}
+
 
 module.exports = {
     registrarse,
@@ -162,4 +182,5 @@ module.exports = {
     eliminarUsuario,
     agregarFavoritos,
     eliminarFavoritos,
+    traerFavoritos
 }

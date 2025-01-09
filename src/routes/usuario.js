@@ -1,9 +1,7 @@
 const express = require('express');
 const { 
     registrarse, traerUsuarios, traerUsuario, modificarUsuario, 
-    eliminarUsuario,
-    agregarFavoritos,
-    eliminarFavoritos,
+    eliminarUsuario, agregarFavoritos, eliminarFavoritos, traerFavoritos
 } = require('../controllers/usuario');
 const { confirmarCorreo } = require('../controllers/envioEmail');
 
@@ -28,10 +26,13 @@ router.put('/modificar/:id', modificarUsuario);
 router.delete('/eliminar/:id', eliminarUsuario);
 
 //------favoritos-------------------------------
+//traer favoritos
+router.get('/favoritos/:id', traerFavoritos);
 //agregar favorito
 router.put('/favorito/agregar/:id', agregarFavoritos);
 //elimina favorito
 router.put('/favorito/eliminar/:id', eliminarFavoritos);
+
 
 
 module.exports = router;
