@@ -1,6 +1,7 @@
 const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
 const Producto = require('../models/producto');
+const { normalizoProdutos } = require('../helpers/normalizoData');
 //const { enviarCorreoConfirmacion } = require('./envioEmail');
 
 
@@ -114,16 +115,19 @@ const eliminarUsuario = async (req, res) => {
 
 //--agregar favoritos
 const agregarFavoritos = async (req, res) => {
-    const { id } = req.params;
-    const { idProducto } = req.body; 
-
+    const { id } = req.params; 
+    const { idProd } = req.body; 
+    
     const usuario = await Usuario.findById(id);
     if(!usuario){
         return res.status(404).json({msg: 'Usuario no encontrado'});
     }
-    
+    if(!idProd || idProd === '' || idProd === null || idProd === undefined){
+        return res.status(400).json({msg: 'Id de producto no válido'});
+    }
+
     const favoritos = usuario.favoritos;
-    favoritos.push(idProducto);
+    favoritos.push(idProd);
 
     await Usuario.findByIdAndUpdate(id, {favoritos});
 
@@ -131,9 +135,9 @@ const agregarFavoritos = async (req, res) => {
 };
 
 //elimina de favoritos
-const eliminarFavoritos = async (req, res) => {
-    const { id } = req.params;
-    const { idProducto } = req.body;
+const eliminarFavoritos = async (req, res) => { 
+    const { id } = req.params; 
+    const { idProd } = req.body;
 
     const usuario = await Usuario.findById(id);
     if(!usuario){
@@ -141,7 +145,7 @@ const eliminarFavoritos = async (req, res) => {
     }
 
     const favoritos = usuario.favoritos;
-    const index = favoritos.indexOf(idProducto);
+    const index = favoritos.indexOf(idProd);
     if(index === -1){
         return res.status(404).json({msg: 'Producto no encontrado en favoritos'});
     }
@@ -158,18 +162,20 @@ const eliminarFavoritos = async (req, res) => {
 const traerFavoritos = async (req, res) => {
     const { id } = req.params;
 
-    const usuario = await Usuario.findById(id);
+    const usuario = await Usuario.findById({_id: id});
     if(!usuario){
         return res.status(404).json({msg: 'Usuario no encontrado'});
     }
 
-    const favoritos = [];
+    let favoritos = [];
     //recorro los favoritos del usuario
     for (let i = 0; i < usuario.favoritos.length; i++) {
         const producto = await Producto.findById(usuario.favoritos[i]);
         favoritos.push(producto);
     }
 
+    //normalizo los datos
+    favoritos = normalizoProdutos(favoritos);
     res.json(favoritos);
 }
 
