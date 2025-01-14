@@ -10,6 +10,7 @@ const normalizoProdutos = (produtos) => {
             enPromo: produto.enPromo,
             porcentajeDescuento: produto.porcentajeDescuento,
             categoria: produto.categoria,
+            marca: produto.marca,
             stock: produto.stock,
         };
     });

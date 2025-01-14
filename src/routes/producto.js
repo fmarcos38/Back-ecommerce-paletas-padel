@@ -14,7 +14,7 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
     try {
         // Parsear el JSON que llega del body
         const parsedData = JSON.parse(data);
-        const { nombre, precio, descripcion, imagenes, agotado, enPromo, porcentajeDescuento, categoria, stock } = parsedData;
+        const { nombre, precio, descripcion, imagenes, agotado, enPromo, porcentajeDescuento, categoria, stock, marca } = parsedData;
 
         // Validación de precio
         const precioNumerico = parseFloat(precio);
@@ -47,7 +47,8 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
             enPromo,
             porcentajeDescuento,
             categoria,
-            stock
+            stock,
+            marca
         });
 
         await nuevoProducto.save();
@@ -76,7 +77,7 @@ router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res)
         // Parsear el JSON que llega del body
         const { data } = req.body;
         const parsedData = JSON.parse(data);
-        const { nombre, precio, imgsExistentes, descripcion, agotado, enPromo, porcentajeDescuento, stock, categoria } = parsedData;
+        const { nombre, precio, imgsExistentes, descripcion, agotado, enPromo, porcentajeDescuento, stock, categoria, marca } = parsedData;
 
         // Buscar el producto
         const producto = await Producto.findById(id);
@@ -111,7 +112,8 @@ router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res)
             enPromo,
             porcentajeDescuento,
             stock,
-            categoria
+            categoria,
+            marca,
         });
 
         res.status(200).json({ msg: 'Producto actualizado correctamente' });

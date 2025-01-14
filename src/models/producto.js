@@ -31,7 +31,10 @@ const ProductoSchema = new Schema({
     porcentajeDescuento: {
         type: Number,
         default: 0
-    }
+    },
+    marca: {
+        type: String
+    },
 });
 
 module.exports = model('Producto', ProductoSchema);
