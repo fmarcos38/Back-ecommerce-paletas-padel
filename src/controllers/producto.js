@@ -4,7 +4,7 @@ const Productos = require('../models/producto');
 //trae productos
 const traerProductos = async (req, res) => {
     const {limit, offset, categoria, marca, enPromo, precioMin, precioMax} = req.query;
-    console.log(req.query);
+    
     try {
         let productos;
         let filtros = {};
