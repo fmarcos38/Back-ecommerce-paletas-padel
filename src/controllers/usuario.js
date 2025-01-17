@@ -1,7 +1,7 @@
 const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
 const Producto = require('../models/producto');
-const { normalizoProdutos } = require('../helpers/normalizoData');
+const { normalizoProductos } = require('../helpers/normalizoData');
 //const { enviarCorreoConfirmacion } = require('./envioEmail');
 
 
@@ -175,7 +175,7 @@ const traerFavoritos = async (req, res) => {
     }
 
     //normalizo los datos
-    favoritos = normalizoProdutos(favoritos);
+    favoritos = normalizoProductos(favoritos);
     res.json(favoritos);
 }
 

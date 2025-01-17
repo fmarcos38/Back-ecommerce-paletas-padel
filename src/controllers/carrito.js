@@ -1,4 +1,4 @@
-const { normalizoProduto } = require('../helpers/normalizoData');
+const { normalizoProducto } = require('../helpers/normalizoData');
 const Carrito = require('../models/carrito');
 
 //trae carrito de un usuario
@@ -8,7 +8,7 @@ const getCarrito = async (req, res) => {
         const carrito = await Carrito.findOne({ usuario: id }).populate('productos.producto');
         if (!carrito) return res.json({ message: 'El carrito esta vacio' });
         //normalizo la data de los productos
-        const prodNormalizado = carrito.productos.map((producto) => normalizoProduto(producto.producto));
+        const prodNormalizado = carrito.productos.map((producto) => normalizoProducto(producto.producto, producto.cantidad));
         res.json({
             usuario: carrito.usuario,
             productos: prodNormalizado
@@ -20,8 +20,8 @@ const getCarrito = async (req, res) => {
 
 //agrega producto al carrito
 const agregarProducto = async (req, res) => {
-    const { id } = req.params; console.log("id: ", id);
-    const { productoId, cantidad } = req.body; console.log("body: ", req.body);
+    const { id } = req.params; 
+    const { productoId, cantidad } = req.body; 
     try {
         const carrito = await Carrito.findOne({ usuario: id });
         //si no existe carrito para el usuario lo creo

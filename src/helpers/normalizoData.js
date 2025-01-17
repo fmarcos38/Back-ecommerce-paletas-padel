@@ -1,37 +1,38 @@
 
-const normalizoProdutos = (produtos) => {
-    return produtos.map((produto) => {
+const normalizoProductos = (productos) => {
+    return productos.map((producto) => {
         return {
-            id: produto.id,
-            nombre: produto.nombre,
-            precio: produto.precio,
-            imagenes: produto.imagenes,
-            agotado: produto.agotado,
-            enPromo: produto.enPromo,
-            porcentajeDescuento: produto.porcentajeDescuento,
-            categoria: produto.categoria,
-            marca: produto.marca,
-            stock: produto.stock,
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagenes: producto.imagenes,
+            agotado: producto.agotado,
+            enPromo: producto.enPromo,
+            porcentajeDescuento: producto.porcentajeDescuento,
+            categoria: producto.categoria,
+            marca: producto.marca,
+            stock: producto.stock,
         };
     });
 };
 
-const normalizoProduto = (produto) => {
+const normalizoProducto = (producto, cantidad) => {
     return {
-            id: produto.id,
-            nombre: produto.nombre,
-            precio: produto.precio,
-            imagenes: produto.imagenes,
-            agotado: produto.agotado,
-            enPromo: produto.enPromo,
-            porcentajeDescuento: produto.porcentajeDescuento,
-            categoria: produto.categoria,
-            marca: produto.marca,
-            stock: produto.stock,
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagenes: producto.imagenes,
+            agotado: producto.agotado,
+            enPromo: producto.enPromo,
+            porcentajeDescuento: producto.porcentajeDescuento,
+            categoria: producto.categoria,
+            marca: producto.marca,
+            stock: producto.stock,
+            cantidad: cantidad
         };
 };
 
 module.exports = {
-    normalizoProdutos,
-    normalizoProduto
+    normalizoProductos,
+    normalizoProducto
 };

@@ -1,4 +1,4 @@
-const { normalizoProdutos } = require('../helpers/normalizoData');
+const { normalizoProductos } = require('../helpers/normalizoData');
 const Productos = require('../models/producto');
 
 //trae productos
@@ -32,7 +32,7 @@ const traerProductos = async (req, res) => {
         const totalProductos = await Productos.countDocuments(filtros);
 
         //normalizo la respuesta
-        const prodsNormalizados = normalizoProdutos(productos);
+        const prodsNormalizados = normalizoProductos(productos);
         //envio la respuesta
         res.status(200).json({
             total: totalProductos,
