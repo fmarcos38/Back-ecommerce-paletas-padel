@@ -3,13 +3,16 @@ const Carrito = require('../models/carrito');
 
 //trae carrito de un usuario
 const getCarrito = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; 
     try {
         const carrito = await Carrito.findOne({ usuario: id }).populate('productos.producto');
         if (!carrito) return res.json({ message: 'El carrito esta vacio' });
         //normalizo la data de los productos
         const prodNormalizado = carrito.productos.map((producto) => normalizoProduto(producto.producto));
-        res.json({ carrito: prodNormalizado });
+        res.json({
+            usuario: carrito.usuario,
+            productos: prodNormalizado
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -17,14 +20,18 @@ const getCarrito = async (req, res) => {
 
 //agrega producto al carrito
 const agregarProducto = async (req, res) => {
-    const { id } = req.params;
-    const { productoId, cantidad } = req.body;
+    const { id } = req.params; console.log("id: ", id);
+    const { productoId, cantidad } = req.body; console.log("body: ", req.body);
     try {
-        const { productoId, cantidad } = req.body;
         const carrito = await Carrito.findOne({ usuario: id });
         //si no existe carrito para el usuario lo creo
         if (!carrito) {
-            const nuevoCarrito = new Carrito({ usuario: id, productos: [{ producto: productoId, cantidad }] });
+            const nuevoCarrito = new Carrito({ 
+                usuario: id, 
+                productos: [{ 
+                    producto: productoId, 
+                    cantidad }] 
+                });
             await nuevoCarrito.save();
             return res.json({ message: 'Producto agregado al carrito' });
         } else {            
@@ -46,17 +53,27 @@ const agregarProducto = async (req, res) => {
 
 //elimina producto del carrito
 const eliminarProducto = async (req, res) => {
+    const { clienteId } = req.params;
+    const { productoId } = req.body; // Aquí estás extrayendo productoId correctamente
+    
     try {
-        const { productoId } = req.body;
-        const carrito = await Carrito.findOne({ usuario: req.usuario._id });
-        //filtro el producto a eliminar
-        carrito.productos = carrito.productos.filter((producto) => producto.producto.toString() !== productoId);
+        const carrito = await Carrito.findOne({ usuario: clienteId });
+        if (!carrito) {
+            return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
+
+        // Filtro el producto a eliminar
+        carrito.productos = carrito.productos.filter(
+            (producto) => producto.producto.toString() !== productoId
+        );
+
         await carrito.save();
         res.json({ message: 'Producto eliminado del carrito' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 module.exports = {
     getCarrito,

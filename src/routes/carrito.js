@@ -7,9 +7,9 @@ const router = express.Router();
 router.get('/:id', getCarrito);
 
 //agrega producto al carrito
-router.post('/agregar/:id', agregarProducto);
+router.put('/agregar/:id', agregarProducto);
 
 //elimina producto del carrito
-router.delete('/eliminar/:id', eliminarProducto);
+router.delete('/eliminar/:clienteId', eliminarProducto);
 
 module.exports = router;
