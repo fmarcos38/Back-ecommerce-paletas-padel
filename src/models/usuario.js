@@ -18,7 +18,7 @@ const UsuarioSchema = Schema({
         required: true
     },
     telefono: {
-        type: Number,
+        type: Object,
         required: true
     },
     favoritos: {
@@ -26,7 +26,7 @@ const UsuarioSchema = Schema({
         default: []
     },
     direccion: {
-        type: String,
+        type: Object,
         required: true
     },
     isAdmin: {

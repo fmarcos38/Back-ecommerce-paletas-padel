@@ -3,7 +3,7 @@ const Carrito = require('../models/carrito');
 
 //trae carrito de un usuario
 const getCarrito = async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
     try {
         const carrito = await Carrito.findOne({ usuario: id }).populate('productos.producto');
         if (!carrito) return res.json({ message: 'El carrito esta vacio' });
