@@ -3,7 +3,7 @@ const axios = require('axios');
 
 // Crear preferencia de pago
 const crearPreferencia = async (req, res) => {
-    const { items, payer } = req.body; console.log("body: ", req.body);
+    const { items, payer } = req.body.body; console.log("body: ", req.body.body);
 
     // Crear preferencia de pago
     const preference = {
@@ -66,9 +66,21 @@ const recibirNotificaciones = async (req, res) => {
     }
 };
 
+//metodo extraigo pref_id
+const extractPrefId = (url) => {
+    try {
+        const urlObj = new URL(url); // Crea un objeto URL
+        const prefId = urlObj.searchParams.get('pref_id'); // Extrae el parámetro "pref_id"
+        return prefId;
+    } catch (error) {
+        console.error('Error al extraer pref_id:', error);
+        return null;
+    }
+};
+
 //paymentMP
 const paymentMP = async (req, res) => {
-    const { body } = req.body; console.log("body: ", req.body);
+    const { body } = req.body; 
     const url = "https://api.mercadopago.com/checkout/preferences";
     
     const payment = await axios.post(url, body, {
@@ -77,9 +89,13 @@ const paymentMP = async (req, res) => {
             Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
         },
     });
-
-    res.send({ url: payment.data.init_point });
+    
+    const prefId = extractPrefId(payment.data.init_point);
+    //console.log("prefId: ", prefId);
+    res.send({ url: prefId }); //sandbox_init_point: 'https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=18517025-cec51d21-c8e6-439d-933f-58d822f22d12'
 };
+
+
 module.exports = {
     crearPreferencia,
     recibirNotificaciones,

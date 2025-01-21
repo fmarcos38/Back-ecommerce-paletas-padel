@@ -44,7 +44,7 @@ const traerProductos = async (req, res) => {
     }
 };
 
-//trae un producto
+//trae un producto por id
 const traerProducto = async (req, res) => {
     const { id } = req.params; 
 
@@ -88,8 +88,25 @@ const traerProductosRangoPrecio = async (req, res) => {
     }
 }
 
+//busca un producto por nombre
+const buscarProductoPorNombre = async (req, res) => {
+    const { nombre } = req.query; console.log("req.query:", req.query);
+
+    try {
+        const producto = await Productos.find({ nombre: { $regex: nombre, $options: 'i' } });
+        if (!producto) {
+            return res.status(404).json({ msg: 'Producto no encontrado' });
+        }
+        res.status(200).json({msg: 'true'});
+    } catch (error) {
+        console.error('Error al buscar el producto:', error);
+        res.status(500).json({ msg: 'Error al buscar el producto' });
+    }
+}
+
 module.exports = {
     traerProductos,
     traerProducto,
     traerProductosRangoPrecio,
+    buscarProductoPorNombre,
 };

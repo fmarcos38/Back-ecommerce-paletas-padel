@@ -2,7 +2,7 @@ const express = require('express');
 const cloudinary = require('../config/cloudinary');
 const upload = require('../config/multer'); 
 const Producto = require('../models/producto');
-const { traerProductos, traerProducto, traerProductosRangoPrecio } = require('../controllers/producto');
+const { traerProductos, traerProducto, traerProductosRangoPrecio, buscarProductoPorNombre } = require('../controllers/producto');
 
 const router = express.Router()
 
@@ -36,6 +36,12 @@ router.post('/', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
                 });
             })
         );
+        
+        //verifico que el producto no exista por nombre
+        const existeProd = await Producto.findOne({ nombre });
+        if (existeProd) {
+            return res.status(400).json({ msg: 'Ya existe un producto con ese nombre' });
+        }
 
         // Crear el nuevo producto
         const nuevoProducto = new Producto({
@@ -65,6 +71,9 @@ router.get('/', traerProductos);
 
 //trae productos en rango de precios +- enviado desde el front
 router.get('/rangoPrecio', traerProductosRangoPrecio);
+
+//busca prod por nombre
+router.get('/busca', buscarProductoPorNombre);
 
 //trae un producto por id - siempre el q es con :id va al final
 router.get('/:id', traerProducto);
