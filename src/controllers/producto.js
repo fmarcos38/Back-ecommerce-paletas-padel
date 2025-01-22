@@ -90,14 +90,18 @@ const traerProductosRangoPrecio = async (req, res) => {
 
 //busca un producto por nombre
 const buscarProductoPorNombre = async (req, res) => {
-    const { nombre } = req.query; console.log("req.query:", req.query);
+    const { nombre } = req.query; 
 
     try {
-        const producto = await Productos.find({ nombre: { $regex: nombre, $options: 'i' } });
+        let msg;
+        const producto = await Productos.findOne({ nombre: nombre }); 
         if (!producto) {
-            return res.status(404).json({ msg: 'Producto no encontrado' });
+            msg = false;
+        } else {
+            msg = true;
         }
-        res.status(200).json({msg: 'true'});
+        
+        res.status(200).json({ msg });
     } catch (error) {
         console.error('Error al buscar el producto:', error);
         res.status(500).json({ msg: 'Error al buscar el producto' });
