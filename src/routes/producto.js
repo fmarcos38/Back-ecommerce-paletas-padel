@@ -143,13 +143,17 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ msg: 'Producto no encontrado' });
         }
 
-        // Eliminar las imágenes de Cloudinary
-        await Promise.all(
-            producto.imagenes.map((imagen) => {
-                const public_id = imagen.split('/').slice(-1)[0].split('.')[0];
-                return cloudinary.uploader.destroy(public_id);
-            })
-        );
+        // Eliminar imágenes de Cloudinary
+        if (producto.imagenes && Array.isArray(producto.imagenes)) {
+            await Promise.all(
+                producto.imagenes.map(async (imagen) => {
+                    if (typeof imagen === 'string') {
+                        const publicId = imagen.split('/').pop().split('.')[0];
+                        await cloudinary.uploader.destroy(publicId);
+                    }
+                })
+            );
+        }
 
         await Producto.findByIdAndDelete(id);
         res.status(200).json({ msg: 'ok' });
