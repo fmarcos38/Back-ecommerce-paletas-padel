@@ -4,7 +4,7 @@ const Productos = require('../models/producto');
 //trae productos
 const traerProductos = async (req, res) => {
     const {limit, offset, categoria, marca, enPromo, precioMin, precioMax} = req.query;
-    
+
     try {
         let productos;
         let filtros = {};
@@ -108,9 +108,20 @@ const buscarProductoPorNombre = async (req, res) => {
     }
 }
 
+//actualización del stock del producto
+const actualizaStock = async (productoId, cantidad) => {
+    try {
+        const producto = await Productos.findById(productoId);
+        producto.stock -= cantidad;
+        await producto.save();
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 module.exports = {
     traerProductos,
     traerProducto,
     traerProductosRangoPrecio,
     buscarProductoPorNombre,
+    actualizaStock,
 };

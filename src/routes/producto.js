@@ -113,16 +113,16 @@ router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res)
 
         // Actualizar el producto
         await Producto.findByIdAndUpdate(id, {
-            nombre,
-            precio,
-            descripcion,
-            imagenes: todasLasImagenes,
-            agotado,
-            enPromo,
-            porcentajeDescuento,
-            stock,
-            categoria,
-            marca,
+            nombre: nombre || producto.nombre,
+            precio: precio || producto.precio,
+            descripcion: descripcion || producto.descripcion,
+            imagenes: todasLasImagenes || producto.imagenes,
+            agotado: agotado || producto.agotado,
+            enPromo: enPromo || producto.enPromo,
+            porcentajeDescuento: porcentajeDescuento || producto.porcentajeDescuento,
+            stock: stock || producto.stock,
+            categoria: categoria || producto.categoria,
+            marca: marca || producto.marca,
         });
 
         res.status(200).json({ msg: 'Producto actualizado correctamente' });

@@ -21,13 +21,13 @@ const UsuarioSchema = Schema({
         type: Object,
         required: true
     },
-    favoritos: {
-        type: Array,
-        default: []
-    },
     direccion: {
         type: Object,
         required: true
+    },
+    favoritos: {
+        type: Array,
+        default: []
     },
     isAdmin: {
         type: Boolean,

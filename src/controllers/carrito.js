@@ -1,5 +1,6 @@
 const { normalizoProducto } = require('../helpers/normalizoData');
 const Carrito = require('../models/carrito');
+const Producto = require('../models/producto');
 
 //trae carrito de un usuario
 const getCarrito = async (req, res) => {
@@ -22,6 +23,7 @@ const getCarrito = async (req, res) => {
 const agregarProducto = async (req, res) => {
     const { id } = req.params; 
     const { productoId, cantidad } = req.body; 
+    
     try {
         const carrito = await Carrito.findOne({ usuario: id });
         //si no existe carrito para el usuario lo creo
@@ -38,7 +40,7 @@ const agregarProducto = async (req, res) => {
                 //si ya existe el producto en el carrito, sumo la cantidad
                 const productoExistente = carrito.productos.find((producto) => producto.producto.toString() === productoId);
                 if (productoExistente) {
-                    productoExistente.cantidad += cantidad;
+                    productoExistente.cantidad += Number(cantidad);
                 } else {
                     //si no existe el producto en el carrito lo agrego
                     carrito.productos.push({ producto: productoId, cantidad });
@@ -75,8 +77,9 @@ const eliminarProducto = async (req, res) => {
 };
 
 
+
 module.exports = {
     getCarrito,
     agregarProducto,
-    eliminarProducto
+    eliminarProducto,
 }
