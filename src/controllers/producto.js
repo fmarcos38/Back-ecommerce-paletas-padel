@@ -80,7 +80,7 @@ const traerProductosRangoPrecio = async (req, res) => {
             productos = await Productos.find(filtros);
         }
         //normalizo
-        const prodsNormalizados = normalizoProdutos(productos);
+        const prodsNormalizados = normalizoProductos(productos);
         //envio la respuesta
         res.status(200).json(prodsNormalizados);
     } catch (error) {
