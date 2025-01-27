@@ -125,7 +125,7 @@ const eliminarUsuario = async (req, res) => {
 
 //--agregar favoritos
 const agregarFavoritos = async (req, res) => {
-    const { id } = req.params; console.log("id:", id);
+    const { id } = req.params; 
     const { idProd } = req.body; 
     
     const usuario = await Usuario.findById(id);
