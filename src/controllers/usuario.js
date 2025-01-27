@@ -2,6 +2,7 @@ const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
 const Producto = require('../models/producto');
 const { normalizoProductos } = require('../helpers/normalizoData');
+const { normalizaUser, normalizaUsuarios } = require('../helpers/normalizauser');
 //const { enviarCorreoConfirmacion } = require('./envioEmail');
 
 
@@ -43,7 +44,8 @@ const registrarse = async (req, res) => {
 const traerUsuarios = async (req, res) => {
     try {
         const usuarios = await Usuario.find();
-        res.json(usuarios);
+        const usuariosNormalizados = normalizaUsuarios(usuarios);
+        res.json(usuariosNormalizados);
     } catch (error) {
         console.error('Error al traer los usuarios:', error);
         res.status(500).json({
@@ -63,8 +65,8 @@ const traerUsuario = async (req, res) => {
                 msg: 'Usuario no encontrado'
             });
         }
-
-        res.json(usuario);
+        const userNormalizado = normalizaUser(usuario);
+        res.json(userNormalizado);
     }
     catch (error) {
         console.error('Error al traer el usuario:', error);
@@ -77,17 +79,23 @@ const traerUsuario = async (req, res) => {
 //modificar usuario
 const modificarUsuario = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellido, email, password, direccion, telefono, isAdmin } = req.body;
-
+    const { 
+        nombre, apellido, dni, 
+        email, direccion, telefono, 
+        comentarios, isAdmin 
+    } = req.body;
+    
     const usuario = await Usuario.findByIdAndUpdate(id, {
         nombre,
         apellido,
+        dni,
         email,
-        password,
         direccion,
         telefono,
+        comentarios,
         isAdmin
     });
+    usuario.save();
 
     if (!usuario) {
         return res.status(404).json({
@@ -95,7 +103,9 @@ const modificarUsuario = async (req, res) => {
         });
     }
 
-    res.json({ msg: 'Usuario modificado' });
+    res.json({
+        user: usuario,
+        msg: 'Usuario modificado' });
 }
 
 //eliminar usuario
@@ -115,7 +125,7 @@ const eliminarUsuario = async (req, res) => {
 
 //--agregar favoritos
 const agregarFavoritos = async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params; console.log("id:", id);
     const { idProd } = req.body; 
     
     const usuario = await Usuario.findById(id);

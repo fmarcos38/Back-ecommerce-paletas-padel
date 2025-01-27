@@ -9,6 +9,9 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    dni: { 
+        type: Number,
+    },
     email: {
         type: String,
         required: true
@@ -32,6 +35,9 @@ const UsuarioSchema = Schema({
     isAdmin: {
         type: Boolean,
         required: true
+    },
+    comentarios: {
+        type: String,
     },
     correoVerificado: {
         type: Boolean,
