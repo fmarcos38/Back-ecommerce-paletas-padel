@@ -1,6 +1,7 @@
 const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require("google-auth-library");
 
 //login
 const login = async (req, res) => { 
@@ -48,31 +49,29 @@ const login = async (req, res) => {
     }
 };
 
-//login con google
-const loginGoogle = async (req, res) => {
-    try {
-        //busco user (tiene q existir para pooder log)
-        const user = await Usuario.findOne({ email: req.body.email });
-        if (!user) {
-            return res.json({ message: 'Email incorrecto' });
-        }
-        else {
-            //si el user es correcto CREO el JWT, para mayor seguridad de mi aplicacion, q se asocia con el email del user
-            const token = jwt.sign({ email: user.email }, process.env.JWT_SEC);
+// Backend Controller - authController.js
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-            res.json({//res --> del login -->esta info esta alojada en -->user._doc CORROBORAR
-                user: user.email,
-                token,
-                message: "ok"
-            });
-        }
+const googleLogin = async (req, res) => {
+    const { tokenId } = req.body; console.log("tokenId",tokenId);
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const { email, name, picture } = ticket.getPayload();
+
+        // Simulate user creation or fetch from DB
+        let user = { email, name, picture }; // Replace with DB operation
+
+        res.status(200).json({ message: "Login successful", user }); console.log("user",user);
     } catch (error) {
-        console.log(error);
+        res.status(401).json({ message: "Invalid token", error: error.message });
     }
-}
+};
 
 
 module.exports = {
     login,
-    loginGoogle
+    googleLogin
 }
