@@ -78,7 +78,7 @@ const traerUsuario = async (req, res) => {
 
 //modificar usuario
 const modificarUsuario = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; console.log('id', id);
     const { 
         nombre, apellido, dni, 
         email, direccion, telefono, 
