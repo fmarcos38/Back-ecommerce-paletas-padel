@@ -20,13 +20,14 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    foto: {
+        type: String,
+    },
     telefono: {
         type: Object,
-        required: true
     },
     direccion: {
         type: Object,
-        required: true
     },
     favoritos: {
         type: Array,

@@ -2,8 +2,9 @@ const Usuario = require('../models/usuario');
 const CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require("google-auth-library");
+const cortaNombreApellido = require('../helpers/cortaNombreApellido');
 
-//login
+//login clásico
 const login = async (req, res) => { 
     try {
         //busco user (tiene q existir para pooder log)
@@ -53,18 +54,48 @@ const login = async (req, res) => {
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const googleLogin = async (req, res) => {
-    const { tokenId } = req.body; console.log("tokenId",tokenId);
+    const { tokenId } = req.body; 
     try {
         const ticket = await client.verifyIdToken({
             idToken: tokenId,
             audience: process.env.GOOGLE_CLIENT_ID,
         });
-        const { email, name, picture } = ticket.getPayload();
-
-        // Simulate user creation or fetch from DB
-        let user = { email, name, picture }; // Replace with DB operation
-
-        res.status(200).json({ message: "Login successful", user }); console.log("user",user);
+        const { email, name, picture } = ticket.getPayload(); 
+        
+        //busco el usuario en la DB
+        const buscoUsuario = await Usuario.findOne({ email: email });
+        //sino existe lo REGISTRO
+        if (!buscoUsuario) {
+            const {nombre, apellido} = cortaNombreApellido(name);
+            const usuario = new Usuario({
+                email: email,
+                nombre,
+                apellido,
+                password: "google",
+                foto: picture,
+                isAdmin: false,
+                correoVerificado: true,
+            });
+            await usuario.save();
+            userLog = {...usuario._doc, token: tokenId}; //atento a lo q retorna usuario !! -->user._doc
+        } else {
+            user = buscoUsuario;
+            userLog = {
+                id: user._id,
+                email: user.email,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                foto: user.foto,
+                telefono: user.telefono,
+                direccion: user.direccion,
+                isAdmin: user.isAdmin,
+                favoritos: user.favoritos,
+                correoVerificado: user.correoVerificado,
+                token: tokenId,
+            };
+        }        
+        //console.log("userLog:", userLog);
+        res.status(200).json({ user: userLog, message: "ok" }); 
     } catch (error) {
         res.status(401).json({ message: "Invalid token", error: error.message });
     }
