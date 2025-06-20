@@ -1,13 +1,14 @@
 const { use } = require("../routes/usuario");
 
+//normaliza usuario
 const normalizaUser = (user) => {
     return {
-        _id: user.id,
+        id: user._id,
         nombre: user.nombre,
         apellido: user.apellido,
         dni: user.dni, 
         email: user.email, 
-        password: user.password, 
+        //password: user.password, 
         telefono: user.telefono, 
         direccion: user.direccion, 
         favoritos: user.favoritos, 
@@ -15,7 +16,7 @@ const normalizaUser = (user) => {
         comentarios: user.comentarios, 
     };
 };
-
+//normaliza usuarios
 const normalizaUsuarios = (usuarios) => {
     return usuarios.map(normalizaUser);
 };

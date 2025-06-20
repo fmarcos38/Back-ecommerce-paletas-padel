@@ -1,4 +1,5 @@
-const { Schema, model } = require('mongoose');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const CarritoSchema = new Schema({
     usuario: {
@@ -20,4 +21,5 @@ const CarritoSchema = new Schema({
     ]
 });
 
-module.exports = model('Carrito', CarritoSchema);
+// 👇 Este condicional evita el OverwriteModelError
+module.exports = mongoose.models.Carrito || mongoose.model('Carrito', CarritoSchema);

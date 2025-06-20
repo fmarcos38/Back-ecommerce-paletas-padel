@@ -4,12 +4,12 @@ const cors = require('cors');
 const dbConnection = require('./src/config/db');
 dotenv.config();
 //importo rutas
+const registrarseRoutes = require('./src/routes/registrarse');
 const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/usuario');
 const productoRoutes = require('./src/routes/producto');
 const carritoRoutes = require('./src/routes/carrito');
 const mercadopagoRoutes = require('./src/routes/mercadopago');
-const correoArgRoutes = require('./src/routes/correoArg');
 
 const app = express();
 
@@ -21,12 +21,12 @@ app.use(cors());
 dbConnection();
 
 //rutas
+app.use('/registrarse', registrarseRoutes);
 app.use('/auth', authRoutes);
 app.use('/usuario', userRoutes);
 app.use('/producto', productoRoutes);
 app.use('/carrito', carritoRoutes);
 app.use('/mercadopago', mercadopagoRoutes);
-app.use('/correoArg', correoArgRoutes);
 
 //puerto
 const PORT = process.env.PORT || 3002;

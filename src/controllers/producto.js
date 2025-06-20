@@ -3,8 +3,8 @@ const Productos = require('../models/producto');
 
 //trae productos
 const traerProductos = async (req, res) => {
-    const {limit, offset, categoria, marca, enPromo, precioMin, precioMax} = req.query;
-
+    const {limit, offset, categoria, marca, enPromo, palabra, precioMin, precioMax} = req.query;
+    
     try {
         let productos;
         let filtros = {};
@@ -13,6 +13,7 @@ const traerProductos = async (req, res) => {
         if (categoria) filtros.categoria = categoria;
         if (marca) filtros.marca = marca;
         if (enPromo) filtros.enPromo = enPromo;
+        if (palabra) filtros.nombre = { $regex: palabra, $options: 'i' };
         if (precioMin && precioMax) {
             filtros.precio = { $gte: precioMin, $lte: precioMax };
         } else if (precioMin) {
@@ -88,12 +89,13 @@ const traerProductosRangoPrecio = async (req, res) => {
     }
 }
 
-//busca un producto por nombre
+//busca productos que contengan el nombre enviado desde el front
 const buscarProductoPorNombre = async (req, res) => {
     const { nombre } = req.query; 
 
     try {
         let msg;
+        //busco pro
         const producto = await Productos.findOne({ nombre: nombre }); 
         if (!producto) {
             msg = false;

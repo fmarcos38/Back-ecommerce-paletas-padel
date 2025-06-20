@@ -47,7 +47,6 @@ const crearPreferencia = async (req, res) => {
     }
 };
 
-
 // Recibir notificaciones de pago
 const recibirNotificaciones = async (req, res) => {
     try {
@@ -78,22 +77,42 @@ const extractPrefId = (url) => {
     }
 };
 
-//paymentMP
+//paymentMP - para crear preferencia
 const paymentMP = async (req, res) => {
-    const { body } = req.body; 
-    const url = "https://api.mercadopago.com/checkout/preferences";
-    
-    const payment = await axios.post(url, body, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+    const { body } = req.body;  console.log("body: ", body);
+    const usuarioId = body.external_reference; // Debe venir del frontend
+
+    const payload = {
+        ...body,
+        external_reference: usuarioId,
+        back_urls: {
+            success: `${process.env.URL}/success`,
+            failure: `${process.env.URL}/failure`,
+            pending: `${process.env.URL}/pending`,
         },
-    });
-    
-    const prefId = extractPrefId(payment.data.init_point);
-    //console.log("prefId: ", prefId);
-    res.send({ url: prefId }); //sandbox_init_point: 'https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=18517025-cec51d21-c8e6-439d-933f-58d822f22d12'
+        auto_return: 'approved',
+        notification_url: `${process.env.URL}/mercadopago/webhooks/mercadopago`,
+    };
+
+    const url = "https://api.mercadopago.com/checkout/preferences";
+
+    try {
+        const payment = await axios.post(url, payload, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+            },
+        });
+
+        const prefId = extractPrefId(payment.data.init_point);
+        res.send({ url: prefId });
+
+    } catch (error) {
+        console.error("Error al crear preferencia:", error);
+        res.status(500).json({ message: 'Error al crear preferencia' });
+    }
 };
+
 
 
 module.exports = {

@@ -78,6 +78,36 @@ router.get('/busca', buscarProductoPorNombre);
 //trae un producto por id - siempre el q es con :id va al final
 router.get('/:id', traerProducto);
 
+//elimina producto y sus imagenes de cloudinary
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const producto = await Producto.findById(id);
+        if (!producto) {
+            return res.status(404).json({ msg: 'Producto no encontrado' });
+        }
+
+        // Eliminar imágenes de Cloudinary
+        if (producto.imagenes && Array.isArray(producto.imagenes)) {
+            await Promise.all(
+                producto.imagenes.map(async (imagen) => {
+                    if (typeof imagen === 'string') {
+                        const publicId = imagen.split('/').pop().split('.')[0];
+                        await cloudinary.uploader.destroy(publicId);
+                    }
+                })
+            );
+        }
+
+        await Producto.findByIdAndDelete(id);
+        res.status(200).json({ msg: 'ok' });
+    } catch (error) {
+        console.error('Error al eliminar el producto:', error);
+        res.status(500).json({ msg: 'Error al eliminar el producto' });
+    }
+});
+
 //edita producto
 router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res) => {
     const { id } = req.params;
@@ -131,38 +161,6 @@ router.put('/edita/:id', upload.fields([{ name: 'imagenes' }]), async (req, res)
         res.status(500).json({ msg: 'Error al editar el producto' });
     }
 });
-
-
-//elimina producto y sus imagenes de cloudinary
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const producto = await Producto.findById(id);
-        if (!producto) {
-            return res.status(404).json({ msg: 'Producto no encontrado' });
-        }
-
-        // Eliminar imágenes de Cloudinary
-        if (producto.imagenes && Array.isArray(producto.imagenes)) {
-            await Promise.all(
-                producto.imagenes.map(async (imagen) => {
-                    if (typeof imagen === 'string') {
-                        const publicId = imagen.split('/').pop().split('.')[0];
-                        await cloudinary.uploader.destroy(publicId);
-                    }
-                })
-            );
-        }
-
-        await Producto.findByIdAndDelete(id);
-        res.status(200).json({ msg: 'ok' });
-    } catch (error) {
-        console.error('Error al eliminar el producto:', error);
-        res.status(500).json({ msg: 'Error al eliminar el producto' });
-    }
-});
-
 
 
 module.exports = router;

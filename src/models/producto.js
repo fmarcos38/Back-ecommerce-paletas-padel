@@ -1,4 +1,5 @@
-const { Schema, model } = require('mongoose');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const ProductoSchema = new Schema({
     nombre: {
@@ -37,4 +38,4 @@ const ProductoSchema = new Schema({
     },
 });
 
-module.exports = model('Producto', ProductoSchema);
+module.exports = mongoose.models.Producto || mongoose.model('Producto', ProductoSchema);

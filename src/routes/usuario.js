@@ -1,17 +1,11 @@
 const express = require('express');
 const { 
-    registrarse, traerUsuarios, traerUsuario, modificarUsuario, 
-    eliminarUsuario, agregarFavoritos, eliminarFavoritos, traerFavoritos
+    traerUsuarios, traerUsuario, traerUsuarioPorDni, modificarUsuario, 
+    eliminarUsuario, agregarFavoritos, eliminarFavoritos, traerFavoritos, modificarPassword
 } = require('../controllers/usuario');
-const { confirmarCorreo } = require('../controllers/envioEmail');
 
 const router = express.Router();
 
-//crea usuario
-router.post('/registrarse', registrarse);
-
-//envio de email de confirmación
-router.post('/confirmar', confirmarCorreo);
 
 //trae usuarios
 router.get('/', traerUsuarios);
@@ -19,8 +13,14 @@ router.get('/', traerUsuarios);
 //trae usuario por id
 router.get('/:id', traerUsuario);
 
+//trae usuario por dni
+router.get('/dni/:dni', traerUsuarioPorDni);
+
 //modificar usuario
 router.put('/modifica/:id', modificarUsuario);
+
+//modif pass
+router.put('/modificaPass/:id', modificarPassword);
 
 //eliminar usuario
 router.delete('/eliminar/:id', eliminarUsuario);
