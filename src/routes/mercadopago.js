@@ -2,9 +2,11 @@ const express = require('express');
 const { crearPreferencia, recibirNotificaciones, paymentMP } = require('../controllers/mercadopago');
 const Carrito = require('../models/carrito');
 const Producto = require('../models/producto');
+const mercadopago = require('mercadopago');
+const axios = require('axios');
 
 const router = express.Router();
-//const ACCESS_TOKEN = '5099c2f8082c889782a8e14d4c292e8d1b3543dd7134c7b543bc50cfecd5b4ab';
+const ACCESS_TOKEN = '5099c2f8082c889782a8e14d4c292e8d1b3543dd7134c7b543bc50cfecd5b4ab';
 
 router.post('/webhooks/mercadopago', async (req, res) => {
     try {
@@ -50,44 +52,47 @@ router.post('/webhooks/mercadopago', async (req, res) => {
 });
 
 //router.post('/crear-preferencia', paymentMP);
-router.post('/', async(req, res) => {
-    const { body } = req.body;  //console.log("body: ", body);
-        const usuarioId = body.external_reference; // Debe venir del frontend
-    
-        const payload = {
-            ...body,
-            external_reference: usuarioId,
-            back_urls: {
-                success: `${process.env.URL}/success`,
-                failure: `${process.env.URL}/failure`,
-                pending: `${process.env.URL}/pending`,
+router.post('/crear-preferencia', async (req, res) => {
+    const { items, payer, external_reference } = req.body;
+
+    console.log("Token MP:", process.env.MERCADOPAGO_ACCESS_TOKEN);
+    console.log("Body recibido:", req.body);
+
+    const preference = {
+        items,
+        payer,
+        external_reference,
+        back_urls: {
+            success: "http://localhost:3000/success",
+            failure: "http://localhost:3000/failure",
+            pending: "http://localhost:3000/pending",
+        },
+        //auto_return: 'approved',  // Opcional redirige al usuario a la vista correspondiente
+        notification_url: 'http://localhost:3002/mercadopago/webhooks/mercadopago',
+    };
+
+    console.log(JSON.stringify(preference, null, 2))
+    const url = "https://api.mercadopago.com/checkout/preferences";
+
+    try {
+        const payment = await axios.post(url, preference, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
             },
-            auto_return: 'approved',
-            //ver que url corresponde
-            notification_url: `http://backendpaletas-0e5d1e2325c9.herokuapp.com/mercadopago/webhooks/mercadopago`,
-        };
-    
-        const url = "https://api.mercadopago.com/checkout/preferences";
-    
-        try {
-            const payment = await axios.post(url, payload, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
-                },
-            });
-    
-            const prefId = extractPrefId(payment.data.init_point);
-            res.send({ url: prefId });
-    
-        } catch (error) {
-            console.error("Error al crear preferencia:", error);
-            res.status(500).json({ message: 'Error al crear preferencia' });
-        }
+        });
+
+        // 👇 Esta línea es suficiente
+        res.send({ url: payment.data.init_point });
+    } catch (error) {
+        console.error("❌ Error al crear preferencia:", error.response?.data || error.message);
+        res.status(500).json({ message: 'Error al crear preferencia' });
+    }
 });
 
+
 //router.post('/notificaciones', recibirNotificaciones);
-router.post('notificaciones', async(req, res) =>{
+router.post('/notificaciones', async(req, res) =>{
     try {
             const { id, topic } = req.query;
     
@@ -103,12 +108,6 @@ router.post('notificaciones', async(req, res) =>{
             res.status(500).json({ message: 'Error al recibir notificación de pago' });
         }
 });
-
-//ruta de prueba del webhook MP
-/* router.post('/webhooks/mercadopago', (req, res) => {
-    console.log('Notificación recibida:', req.body);
-    res.sendStatus(200); // Importante responder 200 OK
-}); */
 
 
 router.get('/verificar-pago/:id', async (req, res) => {

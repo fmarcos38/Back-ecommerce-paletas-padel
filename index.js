@@ -9,7 +9,7 @@ const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/usuario');
 const productoRoutes = require('./src/routes/producto');
 const carritoRoutes = require('./src/routes/carrito');
-const mercadopagoRoutes = require('./src/routes/mercadopago');
+const mercadopagoRoutes = require('./src/routes/mercadoPago2');
 
 const app = express();
 
