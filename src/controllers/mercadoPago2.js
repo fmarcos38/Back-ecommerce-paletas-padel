@@ -35,16 +35,15 @@ const crearPreferencia = async (req, res) => {
                     email: usuario.email,
                 },
                 back_urls: {
-                    success: 'https://tu-app.com/pago-exitoso',
-                    failure: 'https://tu-app.com/pago-fallido',
-                    pending: 'https://tu-app.com/pago-pendiente',
+                    success: 'https://localhost:3000/success',
+                    failure: 'https://localhost:3000/failure',
+                    pending: 'https://localhost:3000/pending',
                 },
                 auto_return: 'approved',
-                notification_url: `${process.env.URL}/api/mercadopago/webhook`,
+                notification_url: `${process.env.BACKEND_URL}/mercadopago/webhook`,
             }
         });
-
-
+console.log("respPreference: ", respuesta)
         return res.status(200).json({ id: respuesta.id });
     } catch (error) {
         console.error('Error al crear preferencia:', error);
@@ -71,7 +70,7 @@ const estadoPago = async (req, res) => {
 
         const paymentClient = new Payment(mp);
         const respuesta = await paymentClient.get({ id });
-
+        console.log("resp_ESTADO: ", estadoPago);
         return res.status(200).json({
             id: respuesta.id,
             status: respuesta.status,
